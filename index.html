@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coasters Tavern | Facebook TV Display Slide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Outfit:wght@500;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b111e;
+      --fb-blue: #1877F2;
+      --fb-dark-blue: #0b57c2;
+      --fb-light-blue: #38bdf8;
+      --fb-gradient: linear-gradient(135deg, #1877F2 0%, #0c4a9e 100%);
+      --text: #ffffff;
+      --text-muted: rgba(255, 255, 255, 0.75);
+      --glass-border: rgba(255, 255, 255, 0.12);
+      --bar-height: 15px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      padding: 24px;
+    }
+
+    /* Ambient background grid */
+    .bg-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+      background: 
+        radial-gradient(circle at 12% 18%, rgba(24, 119, 242, 0.22) 0%, transparent 45%),
+        radial-gradient(circle at 88% 82%, rgba(56, 189, 248, 0.18) 0%, transparent 45%);
+      pointer-events: none;
+    }
+
+    .bg-grid {
+      position: fixed;
+      width: 100vw;
+      height: 100vh;
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+      background-size: 50px 50px;
+      z-index: 2;
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    /* Bottom standard Progress Bar */
+    .bottom-progress-bar-container {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100vw;
+      height: 32px;
+      background: rgba(255, 255, 255, 0.1);
+      z-index: 1000;
+    }
+
+    .bottom-progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--fb-gradient);
+      box-shadow: 0 0 16px var(--fb-blue);
+    }
+
+    /* TV Display Container */
+    .container {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 1540px;
+      height: 88vh;
+      display: grid;
+      grid-template-columns: 400px 1fr;
+      gap: 4.5rem;
+      align-items: center;
+      justify-content: center;
+    }
+
+    @media (max-width: 1024px) {
+      .container {
+        grid-template-columns: 1fr;
+        height: auto;
+      }
+    }
+
+    /* Mobile Phone Frame with Facebook Glow Animation */
+    .phone-column {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
+
+    .phone-frame {
+      width: 390px;
+      height: 760px;
+      background: #000;
+      border-radius: 44px;
+      padding: 12px;
+      position: relative;
+      border: 4px solid var(--glass-border);
+      box-shadow: 
+        0px 25px 60px rgba(0, 0, 0, 0.85),
+        0 0 45px rgba(24, 119, 242, 0.35),
+        0 0 45px rgba(56, 189, 248, 0.25);
+      animation: phone-glow 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes phone-glow {
+      0% {
+        box-shadow: 0px 25px 60px rgba(0, 0, 0, 0.85), 0 0 35px rgba(24, 119, 242, 0.25), 0 0 35px rgba(56, 189, 248, 0.2);
+      }
+      100% {
+        box-shadow: 0px 25px 60px rgba(0, 0, 0, 0.9), 0 0 55px rgba(24, 119, 242, 0.45), 0 0 55px rgba(56, 189, 248, 0.35);
+      }
+    }
+
+    .phone-inner {
+      width: 100%;
+      height: 100%;
+      background: #000;
+      border-radius: 32px;
+      overflow: hidden;
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Phone Camera Notch */
+    .phone-notch {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 140px;
+      height: 24px;
+      background: #000;
+      border-bottom-left-radius: 16px;
+      border-bottom-right-radius: 16px;
+      z-index: 50;
+    }
+
+    /* Live Video Player inside Mobile Frame */
+    .phone-video-wrapper {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      background: #000;
+    }
+
+    .phone-video-wrapper video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Facebook Overlay UI */
+    .fb-ui {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 1.6rem 1.2rem;
+      pointer-events: none;
+      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 45%);
+    }
+
+    /* Top Facebook Header */
+    .fb-top-header {
+      position: absolute;
+      top: 32px;
+      left: 20px;
+      right: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #fff;
+      font-size: 1.25rem;
+      font-weight: 800;
+      z-index: 30;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    }
+
+    .fb-top-header .brand-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #fff;
+    }
+
+    .fb-top-header .brand-icon {
+      width: 28px;
+      height: 28px;
+      background: var(--fb-blue);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 900;
+      color: #fff;
+    }
+
+    .fb-sidebar {
+      position: absolute;
+      right: 12px;
+      bottom: 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.4rem;
+    }
+
+    .sidebar-icon {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #fff;
+    }
+
+    .sidebar-icon .icon-bg {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      font-size: 1.4rem;
+    }
+
+    .sidebar-icon.like-btn .icon-bg {
+      animation: fb-thumb-bounce 2s ease-in-out infinite;
+    }
+
+    @keyframes fb-thumb-bounce {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.15) rotate(-8deg); }
+    }
+
+    .sidebar-icon span {
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.9);
+      white-space: nowrap;
+    }
+
+    .profile-badge {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #000;
+      border: 2px solid var(--fb-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 16px var(--fb-blue);
+      margin-bottom: 0.4rem;
+      animation: badge-pulse 2.5s infinite ease-in-out;
+    }
+
+    @keyframes badge-pulse {
+      0%, 100% { box-shadow: 0 0 12px var(--fb-blue); transform: scale(1); }
+      50% { box-shadow: 0 0 24px var(--fb-light-blue), 0 0 30px var(--fb-blue); transform: scale(1.05); }
+    }
+
+    .profile-badge svg {
+      width: 26px;
+      height: 26px;
+      fill: #fff;
+    }
+
+    /* Floating Reactions Overlay Stream */
+    .hearts-container {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      z-index: 15;
+      pointer-events: none;
+    }
+
+    .floating-heart {
+      position: absolute;
+      bottom: 120px;
+      right: 24px;
+      font-size: 22px;
+      animation: rise-and-fade 2.2s ease-out forwards;
+      opacity: 0;
+    }
+
+    @keyframes rise-and-fade {
+      0% {
+        transform: translateY(0) scale(0.5) translateX(0);
+        opacity: 0;
+      }
+      15% {
+        opacity: 0.95;
+      }
+      100% {
+        transform: translateY(-280px) scale(1.25) translateX(var(--drift));
+        opacity: 0;
+      }
+    }
+
+    .fb-info {
+      max-width: 82%;
+      color: #fff;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.9);
+    }
+
+    .fb-user {
+      font-weight: 800;
+      font-size: 1.15rem;
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .fb-user::after {
+      content: '✓';
+      background: var(--fb-blue);
+      color: #fff;
+      font-size: 9px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+    }
+
+    .fb-desc {
+      font-size: 1.05rem;
+      line-height: 1.4;
+      margin-bottom: 0.4rem;
+      font-weight: 600;
+    }
+
+    .fb-tags {
+      color: var(--fb-light-blue);
+      font-weight: 800;
+    }
+
+    /* RIGHT SIDE: Typography & Balanced Layout */
+    .cta-column {
+      display: flex;
+      flex-direction: column;
+      gap: 2.8rem;
+    }
+
+    .logo-header {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .logo-header svg {
+      width: 86px;
+      height: 86px;
+      flex-shrink: 0;
+      filter: drop-shadow(0 0 15px rgba(24, 119, 242, 0.7));
+    }
+
+    .logo-title-group h2 {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 900;
+      font-size: 2.2rem;
+      letter-spacing: 3px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .logo-title-group h1 {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 900;
+      font-size: 4.8rem;
+      background: linear-gradient(135deg, #ffffff 40%, var(--fb-light-blue) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.05;
+      white-space: nowrap;
+    }
+
+    /* Center-Aligned TV Stats Grid */
+    .stats-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2.4rem;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 2px solid var(--glass-border);
+      border-radius: 28px;
+      padding: 2.6rem 1.8rem;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 6px;
+      height: 100%;
+    }
+
+    .stat-card.likes::before { background: var(--fb-blue); }
+    .stat-card.community::before { background: var(--fb-light-blue); }
+
+    .stat-val {
+      font-family: 'Outfit', sans-serif;
+      font-size: 5.2rem;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1;
+      letter-spacing: -1px;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .stat-label {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-top: 12px;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    /* Maximum Impact QR Code Box */
+    .qr-cta-box {
+      background: linear-gradient(135deg, rgba(24, 119, 242, 0.12) 0%, rgba(14, 165, 233, 0.12) 100%);
+      border: 2px solid var(--glass-border);
+      border-radius: 32px;
+      padding: 2.6rem 3rem;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 3rem;
+      box-shadow: 0 20px 45px rgba(0,0,0,0.6);
+    }
+
+    .qr-wrapper {
+      background: #fff;
+      padding: 16px;
+      border-radius: 28px;
+      flex-shrink: 0;
+      box-shadow: 0 0 35px rgba(24, 119, 242, 0.35);
+    }
+
+    .qr-wrapper img {
+      width: 190px;
+      height: 190px;
+      display: block;
+    }
+
+    .qr-text-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      flex: 1;
+    }
+
+    .qr-text-group h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 4rem;
+      font-weight: 900;
+      line-height: 1.05;
+      margin-bottom: 0.8rem;
+      background: linear-gradient(45deg, var(--fb-light-blue), #fff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      white-space: nowrap;
+    }
+
+    .qr-text-group p {
+      font-size: 1.85rem;
+      color: rgba(255, 255, 255, 0.9);
+      line-height: 1.35;
+      font-weight: 700;
+      text-align: center;
+      text-wrap: balance;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-overlay"></div>
+  <div class="bg-grid"></div>
+
+  <div class="container">
+    
+    <!-- LEFT SIDE: Animated Mobile Phone Display -->
+    <div class="phone-column">
+      <div class="phone-frame">
+        <div class="phone-inner">
+          <div class="phone-notch"></div>
+          
+          <div class="phone-video-wrapper">
+            <video id="auto-feed-video" autoplay loop muted playsinline style="width: 100%; height: 100%; object-fit: cover;">
+              <source src="video.mp4" type="video/mp4">
+            </video>
+
+            <!-- Floating Reactions Overlay Stream -->
+            <div class="hearts-container" id="hearts-container"></div>
+
+            <!-- Facebook UI Overlay -->
+            <div class="fb-ui">
+              <div class="fb-top-header">
+                <div class="brand-title">
+                  <div class="brand-icon">f</div>
+                  <span>Watch</span>
+                </div>
+                <span>🔔</span>
+              </div>
+
+              <div class="fb-sidebar">
+                <div class="profile-badge">
+                  <svg viewBox="0 0 24 24">
+                    <path fill="#1877F2" d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                  </svg>
+                </div>
+                <div class="sidebar-icon like-btn">
+                  <div class="icon-bg">👍</div>
+                  <span id="video-likes">4,120</span>
+                </div>
+                <div class="sidebar-icon">
+                  <div class="icon-bg">💬</div>
+                  <span>198</span>
+                </div>
+                <div class="sidebar-icon">
+                  <div class="icon-bg">↗️</div>
+                  <span>Share</span>
+                </div>
+              </div>
+
+              <div class="fb-info">
+                <div class="fb-user">Coasters Tavern</div>
+                <div class="fb-desc">
+                  Live sports broadcasts, weekly meal deals & community events! 🏉🍺
+                  <span class="fb-tags">#coasterstavern #christchurch #localpub #events</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT SIDE: TV Optimized Branding, Stats & QR CTA -->
+    <div class="cta-column">
+      
+      <!-- Branding Header -->
+      <div class="logo-header">
+        <svg viewBox="0 0 24 24">
+          <path fill="#1877F2" d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+        </svg>
+        <div class="logo-title-group">
+          <h2>Follow Our Community</h2>
+          <h1>COASTERS ON FACEBOOK</h1>
+        </div>
+      </div>
+
+      <!-- TV Stats Grid -->
+      <div class="stats-row">
+        <div class="stat-card likes">
+          <div class="stat-val" id="counter-likes">0</div>
+          <div class="stat-label">Page Likes</div>
+        </div>
+
+        <div class="stat-card community">
+          <div class="stat-val" id="counter-followers">0</div>
+          <div class="stat-label">Followers</div>
+        </div>
+      </div>
+
+      <!-- Centered QR Code Call-To-Action Box -->
+      <div class="qr-cta-box">
+        <div class="qr-wrapper">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&ecc=H&data=https://www.facebook.com/coasterstavern/" alt="Facebook QR">
+        </div>
+        <div class="qr-text-group">
+          <h3>SCAN TO LIKE</h3>
+          <p>Scan with your phone camera to like &amp; follow our Facebook page for live sports schedules &amp; announcements!</p>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Bottom Standard Progress Bar -->
+  <div class="bottom-progress-bar-container">
+    <div class="bottom-progress-bar-fill" id="bottom-progress-fill"></div>
+  </div>
+
+  <script>
+    // Bulletproof Video Autoplay
+    function playFeedVideo() {
+      const vid = document.getElementById('auto-feed-video');
+      if (vid) {
+        vid.muted = true;
+        vid.play().catch(err => {
+          console.log('Autoplay attempt:', err);
+        });
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', playFeedVideo);
+    window.addEventListener('load', playFeedVideo);
+    document.addEventListener('touchstart', playFeedVideo, { once: true });
+    document.addEventListener('click', playFeedVideo, { once: true });
+
+    // Floating Reactions Stream Generator (Facebook thumbs, hearts, cheers)
+    const reactionSymbols = ['👍', '❤️', '🔥', '🍺', '🎉'];
+    const heartsContainer = document.getElementById('hearts-container');
+    
+    function spawnReaction() {
+      if (!heartsContainer) return;
+      const r = document.createElement('div');
+      r.className = 'floating-heart';
+      r.innerText = reactionSymbols[Math.floor(Math.random() * reactionSymbols.length)];
+      
+      const drift = (Math.random() * 80 - 40) + 'px';
+      r.style.setProperty('--drift', drift);
+      
+      heartsContainer.appendChild(r);
+      setTimeout(() => r.remove(), 2200);
+    }
+
+    setInterval(spawnReaction, 650);
+
+    // Target stats for Facebook
+    const realTargets = {
+      likes: 3820,
+      followers: 4150
+    };
+
+    const elements = {
+      likes: document.getElementById('counter-likes'),
+      followers: document.getElementById('counter-followers')
+    };
+
+    let slideDuration = 30000; // 30 seconds
+    let startTime = Date.now();
+    let isPaused = false;
+    let isLocked = false;
+    let pauseTime = 0;
+
+    function formatNum(val) {
+      if (val >= 10000) {
+        return (val / 1000).toFixed(1) + 'K';
+      }
+      return Math.floor(val).toLocaleString();
+    }
+
+    function animateSlideCycle() {
+      if (!isPaused && !isLocked) {
+        const now = Date.now();
+        let elapsed = now - startTime;
+        if (elapsed >= slideDuration) {
+          if (window.parent && window.parent !== window) {
+            window.parent.postMessage({ type: 'SKIP_MODULE' }, '*');
+          }
+          startTime = Date.now();
+          elapsed = 0;
+        }
+        let progress = Math.min(1, elapsed / slideDuration);
+
+        // Update bottom progress bar
+        const bar = document.getElementById('bottom-progress-fill');
+        if (bar) bar.style.width = (progress * 100) + '%';
+
+        // Increment counters up to targets
+        for (const key in realTargets) {
+          const target = realTargets[key];
+          const currentValue = Math.min(target, target * progress);
+          if (elements[key]) elements[key].innerText = formatNum(currentValue);
+        }
+      }
+
+      requestAnimationFrame(animateSlideCycle);
+    }
+
+    requestAnimationFrame(animateSlideCycle);
+
+    function showHudToast(text) {
+      let toast = document.getElementById('kb-hud-toast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'kb-hud-toast';
+        toast.style.cssText = 'position:fixed;bottom:24px;right:24px;background:rgba(0,0,0,0.85);color:#fff;border:1px solid rgba(255,255,255,0.25);padding:10px 18px;border-radius:10px;font-size:15px;font-weight:600;z-index:99999;box-shadow:0 8px 24px rgba(0,0,0,0.6);letter-spacing:0.5px;pointer-events:none;transition:opacity 0.2s ease;';
+        document.body.appendChild(toast);
+      }
+      toast.textContent = text;
+      toast.style.opacity = '1';
+      clearTimeout(toast._timeout);
+      toast._timeout = setTimeout(() => { toast.style.opacity = '0'; }, 1600);
+    }
+
+    // Standard Keyboard Controls
+    window.addEventListener('keydown', (e) => {
+      const activeTag = (document.activeElement?.tagName || '').toLowerCase();
+      if (activeTag === 'input' || activeTag === 'textarea' || activeTag === 'select' || document.activeElement?.isContentEditable) return;
+
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        startTime = Date.now();
+        showHudToast('Restart Slide');
+      } else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (window.parent && window.parent !== window) {
+          window.parent.postMessage({ type: 'SKIP_MODULE' }, '*');
+        }
+        showHudToast('Next Module');
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        startTime = Date.now();
+        showHudToast('Restart Module');
+      } else if (e.key === ' ' || e.code === 'Space') {
+        e.preventDefault();
+        isPaused = !isPaused;
+        const vid = document.getElementById('auto-feed-video');
+        if (isPaused) {
+          pauseTime = Date.now();
+          if (vid) vid.pause();
+        } else {
+          startTime += (Date.now() - pauseTime);
+          if (vid) vid.play().catch(() => {});
+        }
+        showHudToast(isPaused ? 'Paused' : 'Playing');
+      } else if (e.key === 'a' || e.key === 'A') {
+        e.preventDefault();
+        window.open('admin.html', '_blank');
+      } else if (e.key === 'r' || e.key === 'R') {
+        e.preventDefault();
+        window.open('remote.html', '_blank');
+      } else if (e.key >= '1' && e.key <= '9') {
+        e.preventDefault();
+        const secs = parseInt(e.key, 10) * 10;
+        slideDuration = secs * 1000;
+        startTime = Date.now();
+        showHudToast(`Speed: ${secs}s`);
+      } else if (e.key === '0') {
+        e.preventDefault();
+        isLocked = !isLocked;
+        if (isLocked) {
+          pauseTime = Date.now();
+        } else {
+          startTime += (Date.now() - pauseTime);
+        }
+        showHudToast(isLocked ? 'Slide Locked' : 'Slide Unlocked');
+      }
+    });
+
+    window.addEventListener('message', (e) => {
+      if (!e.data) return;
+      if (e.data.type === 'SKIP_MODULE') {
+        if (window.parent && window.parent !== window) window.parent.postMessage({ type: 'SKIP_MODULE' }, '*');
+      } else if (e.data.type === 'GOTO_FIRST') {
+        startTime = Date.now();
+      }
+    });
+  </script>
+</body>
+</html>
