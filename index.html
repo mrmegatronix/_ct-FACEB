@@ -419,7 +419,7 @@
     /* Center-Aligned TV Stats Grid */
     .stats-row {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr;
       gap: 2.4rem;
     }
 
@@ -617,11 +617,6 @@
           <div class="stat-val" id="counter-likes">0</div>
           <div class="stat-label">Page Likes</div>
         </div>
-
-        <div class="stat-card community">
-          <div class="stat-val" id="counter-followers">0</div>
-          <div class="stat-label">Followers</div>
-        </div>
       </div>
 
       <!-- Centered QR Code Call-To-Action Box -->
@@ -682,13 +677,11 @@
 
     // Target stats for Facebook
     const realTargets = {
-      likes: 3820,
-      followers: 4150
+      likes: 3820
     };
 
     const elements = {
-      likes: document.getElementById('counter-likes'),
-      followers: document.getElementById('counter-followers')
+      likes: document.getElementById('counter-likes')
     };
 
     let slideDuration = 30000; // 30 seconds
