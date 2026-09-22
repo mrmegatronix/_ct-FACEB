@@ -1,4 +1,4 @@
-# AGENTS.md: _ct-TIK
+# AGENTS.md: _ct-FACEB
 
 ## Operational Protocols
 - Adhere strictly to the workspace guidelines in [GEMINI.md](../GEMINI.md).

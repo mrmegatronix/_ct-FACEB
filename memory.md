@@ -1,13 +1,13 @@
-# Agent Memory Bank: _ct-TIK
+# Agent Memory Bank: _ct-FACEB
 
 > Persistent knowledge, architecture, patterns, and decisions synced via `agent-memory-mcp`.
 
 ## 1. Project Overview & Architecture
-- **Repository**: `_ct-TIK`
+- **Repository**: `_ct-FACEB`
 - **Type**: Web / Digital Signage Application
 - **Tech Stack**: CSS3, HTML5, Vanilla JavaScript
 - **Entry Points**: index.html
-- **Description**: Web / Digital Signage Application for _ct-TIK.
+- **Description**: Web / Digital Signage Application for Facebook TV Display Slide (_ct-FACEB).
 
 ## 2. Core Operational Conventions & Protocol Rules
 - **Response Constraints**: No conversational prose; use micro-diffs (`-` / `+`), standard git diffs, key-value pairs, or atomic bullet points.
